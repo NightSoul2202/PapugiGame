@@ -1,0 +1,71 @@
+# Тимчасові файли компіляції та збірки
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+Build/
+CrashReport/
+
+# Тимчасові файли плагінів
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+Plugins/*/Saved/
+
+# Локальні конфігурації та логи
+*.log
+*.swp
+*.bak
+*.scc
+
+# Файли IDE
+.vs/
+.idea/
+.vscode/
+*.sln
+*.suo
+*.db
+*.opendb
+*.VC.db
+
+# ==========================================
+# БЛОКУВАННЯ ВЕЛИКИХ ТА БІНАРНИХ ФАЙЛІВ
+# ==========================================
+
+# 1. Специфічні бінарні формати Unreal Engine
+*.uasset
+*.umap
+
+# 2. Сирі 3D-моделі та анімації
+*.fbx
+*.obj
+*.blend
+*.abc
+
+# 3. Текстури та графіка
+*.png
+*.jpg
+*.jpeg
+*.tga
+*.psd
+*.exr
+*.hdr
+*.tif
+*.tiff
+
+# 4. Звуки та відео
+*.wav
+*.mp3
+*.ogg
+*.mp4
+*.avi
+*.mov
+
+# 5. Архіви
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# Системні файли ОС
+.DS_Store
+Thumbs.db
