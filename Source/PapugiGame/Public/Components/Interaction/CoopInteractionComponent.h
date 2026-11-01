@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Coop|Interaction")
 	void TryInteract();
 
+	UFUNCTION(Server, Reliable)
+	void Server_Interact(AActor* InteractableTarget);
+
 	UPROPERTY(BlueprintAssignable, Category = "Coop|Interaction")
 	FOnInteractionFocusChanged OnFocusChanged;
 

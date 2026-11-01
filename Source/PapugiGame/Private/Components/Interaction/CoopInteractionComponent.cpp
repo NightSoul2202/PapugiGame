@@ -34,7 +34,6 @@ void UCoopInteractionComponent::BeginPlay()
 			);
 		}
 	}
-	
 }
 
 void UCoopInteractionComponent::UpdateFocus()
@@ -94,7 +93,23 @@ void UCoopInteractionComponent::TryInteract()
 {
 	if (CurrentFocus)
 	{
-		ICoopInteractable::Execute_Interact(CurrentFocus, GetOwner());
+		if (GetOwner()->HasAuthority())
+		{ 
+			ICoopInteractable::Execute_Interact(CurrentFocus, GetOwner());
+		}
+		else
+		{
+			Server_Interact(CurrentFocus);
+		}
+		
+	}
+}
+
+void UCoopInteractionComponent::Server_Interact_Implementation(AActor* InteractableTarget)
+{
+	if (InteractableTarget)
+	{
+		ICoopInteractable::Execute_Interact(InteractableTarget, GetOwner());
 	}
 }
 

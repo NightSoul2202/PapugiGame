@@ -8,7 +8,7 @@ UCoopAmmoComponent::UCoopAmmoComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 
 	CurrentAmmo = MaxAmmo;
 }

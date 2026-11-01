@@ -11,9 +11,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
-#include <Core/CoopPlayerState.h>
+#include "Core/CoopPlayerState.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/GameModeBase.h"
+#include "Input/CoopInputConfig.h"
+#include "Components/Interaction/CoopInteractionComponent.h"
 
 ACoopPlayerCharacter::ACoopPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCoopCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -59,6 +61,19 @@ void ACoopPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ACoopPlayerCharacter::StartCrouching);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ACoopPlayerCharacter::StopCrounching);
 		EnhancedInputComponent->BindAction(SlideAction, ETriggerEvent::Started, this, &ACoopPlayerCharacter::Slide);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ACoopPlayerCharacter::Interact);
+
+		if (InputConfig)
+		{
+			for (const FCoopInputAction& Action : InputConfig->InputActions)
+			{
+				if (Action.InputAction && Action.InputTag.IsValid())
+				{
+					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Triggered, this, &ACoopPlayerCharacter::Input_AbilityInputTagPressed, Action.InputTag);
+					EnhancedInputComponent->BindAction(Action.InputAction, ETriggerEvent::Canceled, this, &ACoopPlayerCharacter::Input_AbilityInputTagReleased, Action.InputTag);
+				}
+			}
+		}
 	}
 }
 
@@ -134,6 +149,47 @@ void ACoopPlayerCharacter::OnDeath()
 void ACoopPlayerCharacter::StopSliding()
 {
 	CancelAbilityByClass(SlideAbilityClass);
+}
+
+void ACoopPlayerCharacter::Input_AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	{
+		for (FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+		{
+			if (Spec.Ability && (Spec.DynamicAbilityTags.HasTagExact(InputTag) || Spec.Ability->AbilityTags.HasTagExact(InputTag)))
+			{
+				ASC->AbilitySpecInputPressed(Spec);
+
+				if (!Spec.IsActive())
+				{
+					ASC->TryActivateAbility(Spec.Handle);
+				}
+			}
+		}
+	}
+}
+
+void ACoopPlayerCharacter::Input_AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	{
+		for (FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+		{
+			if (Spec.Ability && (Spec.DynamicAbilityTags.HasTagExact(InputTag) || Spec.Ability->AbilityTags.HasTagExact(InputTag)))
+			{
+				ASC->AbilitySpecInputReleased(Spec);
+			}
+		}
+	}
+}
+
+void ACoopPlayerCharacter::Interact()
+{
+	if (UCoopInteractionComponent* InteractComp = FindComponentByClass<UCoopInteractionComponent>())
+	{
+		InteractComp->TryInteract();
+	}
 }
 
 void ACoopPlayerCharacter::ActivateAbilityByClass(TSubclassOf<class UGameplayAbility> AbilityClass)

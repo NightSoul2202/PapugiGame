@@ -7,12 +7,15 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameplayEffect.h"
-#include <GameplayAbilitySpec.h>
+#include "GameplayAbilitySpec.h"
+#include "Net/UnrealNetwork.h"
 
 ACoopBaseEquipment::ACoopBaseEquipment()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
+
+	SetReplicateMovement(true);
 
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	RootComponent = CollisionComponent;
@@ -22,6 +25,7 @@ ACoopBaseEquipment::ACoopBaseEquipment()
 	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	CollisionComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	CollisionComponent->SetSimulatePhysics(true);
 
 	EquipmentMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("EquipmentMesh"));
@@ -55,6 +59,13 @@ void ACoopBaseEquipment::EquipItem(UAbilitySystemComponent* TargetASC, USkeletal
 {
 	if (!TargetASC || !TargetMesh) return;
 
+	if (HasAuthority())
+	{
+		AActor* AvatarActor = TargetASC->GetAvatarActor();
+		SetOwner(AvatarActor);
+		SetInstigator(Cast<APawn>(AvatarActor));
+	}
+
 	CollisionComponent->SetSimulatePhysics(false);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -75,6 +86,9 @@ void ACoopBaseEquipment::UnequipItem(UAbilitySystemComponent* TargetASC)
 	{
 		RemoveGrantedAbilities(TargetASC);
 		RemoveGrantedEffects(TargetASC);
+
+		SetOwner(nullptr);
+		SetInstigator(nullptr);
 	}
 
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);

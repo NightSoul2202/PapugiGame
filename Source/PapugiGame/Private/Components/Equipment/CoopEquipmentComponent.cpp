@@ -11,7 +11,7 @@ UCoopEquipmentComponent::UCoopEquipmentComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 }
 
 void UCoopEquipmentComponent::BeginPlay()
@@ -26,8 +26,25 @@ void UCoopEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(UCoopEquipmentComponent, CurrentItem);
 }
 
-void UCoopEquipmentComponent::OnRep_CurrentItem(ACoopBaseEquipment* /*OldItem*/)
+void UCoopEquipmentComponent::OnRep_CurrentItem(ACoopBaseEquipment* OldItem)
 {
+	if (OldItem)
+	{
+		UAbilitySystemComponent* ASC = GetOwnerASC(GetOwner());
+		OldItem->UnequipItem(ASC);
+	}
+
+	if (CurrentItem)
+	{
+		UAbilitySystemComponent* ASC = GetOwnerASC(GetOwner());
+		USkeletalMeshComponent* Mesh = GetOwnerMesh(GetOwner());
+
+		if (ASC && Mesh)
+		{
+			CurrentItem->EquipItem(ASC, Mesh);
+		}
+	}
+
 	OnEquipmentChanged.Broadcast(CurrentItem);
 }
 
