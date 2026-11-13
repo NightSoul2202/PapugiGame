@@ -27,7 +27,7 @@ class PAPUGIGAME_API UInputConfig : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "|Input")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TArray<FCoop_InputAction> InputActions;
 
 	FGameplayTag FindAbilityTagForInputAction(const UInputAction* InputAction, bool bLogNotFound = false) const;

@@ -26,21 +26,21 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "|Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Weapon")
 	int32 AmmoCost;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "|Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Weapon")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	UFUNCTION(BlueprintCallable, Category = "|Weapon")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Weapon")
 	UAmmoComponent* GetWeaponAmmoComponent() const;
 
-	UFUNCTION(BlueprintCallable, Category = "|Weapon")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Weapon")
 	UFirearmComponent* GetFirearmComponent() const;
 
 	bool PerformHitTrace(FHitResult& OutHitResult, float InWeaponRange) const;
 
-	void ApplyDamageToTarget(AActor* TargetActor) const;
+	void ApplyDamageToTarget(AActor* TargetActor, float BaseDamage) const;
 
 private:
 	FTimerHandle FireTimerHandle;

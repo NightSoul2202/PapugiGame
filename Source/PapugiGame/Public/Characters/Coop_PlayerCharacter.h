@@ -14,6 +14,7 @@ class UCameraComponent;
 class UInputComponent;
 class UInputAction;
 class UInputMappingContext;
+class UHealthComponent;
 
 UCLASS()
 class PAPUGIGAME_API ACoop_PlayerCharacter : public ACharacter, public IAbilitySystemInterface
@@ -29,6 +30,9 @@ public:
 
 	virtual void OnRep_PlayerState() override;
 	void StopSliding();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnDeath();
 
 protected:
 	virtual void BeginPlay() override;
@@ -54,6 +58,9 @@ protected:
 	virtual void OnDeath();
 
 	FGameplayAbilitySpecHandle CurrentSprintSpeedHandle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Components")
+	TObjectPtr<UHealthComponent> HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> CameraComponent;
@@ -88,10 +95,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> DropAction;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Abilities")
 	TSubclassOf<class UGameplayAbility> SprintAbilityClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Abilities")
 	TSubclassOf<class UGameplayAbility> SlideAbilityClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")

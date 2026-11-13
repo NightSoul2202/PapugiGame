@@ -23,13 +23,13 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "|Reload")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Reload")
 	TSubclassOf<UGameplayEffect> ReloadEffectClass;
 
-	UFUNCTION(BlueprintCallable, Category = "|Reload")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Reload")
 	UFirearmComponent* GetFirearmComponent() const;
 
-	UFUNCTION(BlueprintCallable, Category = "|Reload")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Reload")
 	UAmmoComponent* GetWeaponAmmoComponent() const;
 
 	UFUNCTION()

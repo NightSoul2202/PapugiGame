@@ -18,25 +18,25 @@ class PAPUGIGAME_API UInteractionComponent : public UActorComponent
 public:	
 	UInteractionComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "|Interaction")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Interaction")
 	void TryInteract();
 
 	UFUNCTION(Server, Reliable)
 	void Server_Interact(AActor* InteractableTarget);
 
-	UPROPERTY(BlueprintAssignable, Category = "|Interaction")
+	UPROPERTY(BlueprintAssignable, Category = "Coop|Interaction")
 	FOnInteractionFocusChanged OnFocusChanged;
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "|Interaction")
+	UPROPERTY(EditDefaultsOnly, Category = "Coop|Interaction")
 	float InteractionDistance;
 
-	UPROPERTY(EditDefaultsOnly, Category = "|Interaction")
+	UPROPERTY(EditDefaultsOnly, Category = "Coop|Interaction")
 	float TraceFrequency;
 
-	UPROPERTY(Transient, EditDefaultsOnly, Category = "|Interaction")
+	UPROPERTY(Transient, EditDefaultsOnly, Category = "Coop|Interaction")
 	TObjectPtr<AActor> CurrentFocus;
 
 	FTimerHandle TimerHandle_Interaction;

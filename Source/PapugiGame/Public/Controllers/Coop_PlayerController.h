@@ -16,7 +16,7 @@ protected:
 
 	virtual void SetPawn(APawn* InPawn) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "|UI")
+	UPROPERTY(EditDefaultsOnly, Category = "Coop|UI")
 	TSubclassOf<class UPlayerHUDWidget> HUDWidgetClass;
 		
 	UPROPERTY()

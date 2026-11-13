@@ -28,24 +28,24 @@ public:
 
 	virtual void Interact_Implementation(AActor* InstigatorActor) override;
 
-	UFUNCTION(BlueprintPure, Category = "|Equipment")
+	UFUNCTION(BlueprintPure, Category = "Coop|Equipment")
 	USkeletalMeshComponent* GetEquipmentMesh() const;
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "|Equipment")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Equipment")
 	TObjectPtr<UBoxComponent> CollisionComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "|Equipment")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Equipment")
 	TObjectPtr<USkeletalMeshComponent> EquipmentMesh;
 
-	UPROPERTY(EditDefaultsOnly, Category = "|Equipment")
+	UPROPERTY(EditDefaultsOnly, Category = "Coop|Equipment")
 	FName AttachmentSocketName;
 
-	UPROPERTY(EditDefaultsOnly, Category = "|GAS")
+	UPROPERTY(EditDefaultsOnly, Category = "Coop|GAS")
 	TArray<TSubclassOf<UGameplayAbility>> GrantedAbilities;
 
-	UPROPERTY(EditDefaultsOnly, Category = "|GAS")
+	UPROPERTY(EditDefaultsOnly, Category = "Coop|GAS")
 	TArray<TSubclassOf<UGameplayEffect>> GrantedEffects;
 
 	TArray<FGameplayAbilitySpecHandle> GrantedAbilityHandles;

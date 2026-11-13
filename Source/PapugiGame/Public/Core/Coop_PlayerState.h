@@ -10,7 +10,8 @@
 DECLARE_MULTICAST_DELEGATE(FOnOutHealth);
 
 class UAbilitySystemComponent;
-class UCoop_AttributeSet;
+class UHealthAttributeSet;
+class UMovementAttributeSet;
 
 UCLASS()
 class PAPUGIGAME_API ACoop_PlayerState : public APlayerState, public IAbilitySystemInterface
@@ -22,16 +23,19 @@ public:
 
 	FOnOutHealth OnOutHealthDelegate;
 
-	void DeathState();
+	void BroadcastDeath();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Abilities")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS")
-	TObjectPtr<UCoop_AttributeSet> AttributeSet;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Attributes")
+	TObjectPtr<UHealthAttributeSet> HealthAttributeSet;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Attributes")
+	TObjectPtr<UMovementAttributeSet> MovementAttributeSet;
 	
 };

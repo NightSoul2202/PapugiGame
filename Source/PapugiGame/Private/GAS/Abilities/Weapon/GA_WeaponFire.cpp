@@ -9,6 +9,7 @@
 #include "Equipment/Core/BaseEquipment.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
 
 
 UGA_WeaponFire::UGA_WeaponFire()
@@ -157,7 +158,7 @@ bool UGA_WeaponFire::PerformHitTrace(FHitResult& OutHitResult, float InWeaponRan
     return bHit;
 }
 
-void UGA_WeaponFire::ApplyDamageToTarget(AActor* TargetActor) const
+void UGA_WeaponFire::ApplyDamageToTarget(AActor* TargetActor, float BaseDamage) const
 {
     if (!TargetActor || !DamageEffectClass || !CurrentActorInfo)
     {
@@ -165,7 +166,7 @@ void UGA_WeaponFire::ApplyDamageToTarget(AActor* TargetActor) const
     }
 
     UAbilitySystemComponent* SourceASC = CurrentActorInfo->AbilitySystemComponent.Get();
-    UAbilitySystemComponent* TargetASC = TargetActor->FindComponentByClass<UAbilitySystemComponent>();
+    UAbilitySystemComponent* TargetASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);;
 
     if (SourceASC && TargetASC)
     {
@@ -176,6 +177,9 @@ void UGA_WeaponFire::ApplyDamageToTarget(AActor* TargetActor) const
 
         if (SpecHandle.IsValid())
         {
+            FGameplayTag DamageTag = FGameplayTag::RequestGameplayTag("Data.Damage");
+            SpecHandle.Data.Get()->SetSetByCallerMagnitude(DamageTag, BaseDamage);
+
             SourceASC->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), TargetASC);
         }
     }
@@ -260,7 +264,7 @@ void UGA_WeaponFire::ProcessHit(UFirearmComponent* FirearmComponent)
     {
         if (HitResult.GetActor() && HasAuthority(&CurrentActivationInfo))
         {
-            ApplyDamageToTarget(HitResult.GetActor());
+            ApplyDamageToTarget(HitResult.GetActor(), FirearmComponent->BaseDamage);
         }
     }
 }

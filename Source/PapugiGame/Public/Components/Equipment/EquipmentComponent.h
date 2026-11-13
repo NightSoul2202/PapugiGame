@@ -20,16 +20,16 @@ class PAPUGIGAME_API UEquipmentComponent : public UActorComponent
 public:	
 	UEquipmentComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "|Equipment")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Equipment")
 	void EquipItem(ABaseEquipment* ItemToEquip);
 
-	UFUNCTION(BlueprintCallable, Category = "|Equipment")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Equipment")
 	void DropItem();
 
-	UFUNCTION(BlueprintPure, Category = "|Equipment")
+	UFUNCTION(BlueprintPure, Category = "Coop|Equipment")
 	ABaseEquipment* GetCurrentItem() const;
 		
-	UPROPERTY(BlueprintAssignable, Category = "|Equipment")
+	UPROPERTY(BlueprintAssignable, Category = "Coop|Equipment")
 	FOnEquipmentChanged OnEquipmentChanged;
 
 protected:
@@ -37,7 +37,7 @@ protected:
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(BlueprintReadOnly, Category = "|Equipment", ReplicatedUsing = OnRep_CurrentItem)
+	UPROPERTY(BlueprintReadOnly, Category = "Coop|Equipment", ReplicatedUsing = OnRep_CurrentItem)
 	TObjectPtr<ABaseEquipment> CurrentItem;
 
 	UFUNCTION()

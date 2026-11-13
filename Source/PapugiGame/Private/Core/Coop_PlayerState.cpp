@@ -3,7 +3,8 @@
 
 #include "Core/Coop_PlayerState.h"
 #include "AbilitySystemComponent.h"
-#include <GAS/Attributes/Coop_AttributeSet.h>
+#include <GAS/Attributes/HealthAttributeSet.h>
+#include <GAS/Attributes/MovementAttributeSet.h>
 
 ACoop_PlayerState::ACoop_PlayerState()
 {
@@ -11,12 +12,13 @@ ACoop_PlayerState::ACoop_PlayerState()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
-	AttributeSet = CreateDefaultSubobject<UCoop_AttributeSet>(TEXT("AttributeSet"));
+	HealthAttributeSet = CreateDefaultSubobject<UHealthAttributeSet>(TEXT("HealthAttributeSet"));
+	MovementAttributeSet = CreateDefaultSubobject<UMovementAttributeSet>(TEXT("MovementAttributeSet"));
 
 	NetUpdateFrequency = 128.0f;
 }
 
-void ACoop_PlayerState::DeathState()
+void ACoop_PlayerState::BroadcastDeath()
 {
 	if (OnOutHealthDelegate.IsBound())
 	{

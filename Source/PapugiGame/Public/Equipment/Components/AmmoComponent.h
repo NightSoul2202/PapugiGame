@@ -16,25 +16,27 @@ class PAPUGIGAME_API UAmmoComponent : public UActorComponent
 public:	
 	UAmmoComponent();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "|Ammo")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Ammo")
 	int32 MaxAmmo = 30;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "|Ammo", ReplicatedUsing = OnRep_CurrentAmmo)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Coop|Ammo", ReplicatedUsing = OnRep_CurrentAmmo)
 	int32 CurrentAmmo;
 
-	UPROPERTY(BlueprintAssignable, Category = "|Ammo")
+	UPROPERTY(BlueprintAssignable, Category = "Coop|Ammo")
 	FOnAmmoChanged OnAmmoChanged;
 
-	UFUNCTION(BlueprintCallable, Category = "|Ammo")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Ammo")
 	bool TryConsumeAmmo(int32 Amount);
 
-	UFUNCTION(BlueprintCallable, Category = "|Ammo")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Ammo")
 	void OnRep_CurrentAmmo(int32 OldAmmo);
 
-	UFUNCTION(BlueprintCallable, Category = "|Ammo")
+	UFUNCTION(BlueprintCallable, Category = "Coop|Ammo")
 	void ReloadAmmo();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	bool IsWeaponLocallyControlled();
 			
 };

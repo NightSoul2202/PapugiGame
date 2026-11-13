@@ -18,7 +18,7 @@ bool UAmmoComponent::TryConsumeAmmo(int32 Amount)
 	{
 		CurrentAmmo -= Amount;
 
-		if (GetOwner()->HasAuthority() || GetOwner()->GetInstigatorController()->IsLocalPlayerController())
+		if (IsWeaponLocallyControlled())
 		{
 			OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
 		}
@@ -41,7 +41,10 @@ void UAmmoComponent::ReloadAmmo()
 	{
 		CurrentAmmo = MaxAmmo;
 
-		OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+		if (IsWeaponLocallyControlled())
+		{
+			OnAmmoChanged.Broadcast(CurrentAmmo, MaxAmmo);
+		}
 	}
 }
 
@@ -50,6 +53,18 @@ void UAmmoComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(UAmmoComponent, CurrentAmmo, COND_OwnerOnly);
+}
+
+bool UAmmoComponent::IsWeaponLocallyControlled()
+{
+	if (AActor* WeaponActor = GetOwner())
+	{
+		if (APawn* OwningPawn = Cast<APawn>(WeaponActor->GetInstigator()))
+		{
+			return OwningPawn->IsLocallyControlled();
+		}
+	}
+	return false;
 }
 
 

@@ -2,7 +2,7 @@
 
 
 #include "GAS/Calculations/DamageExecCalc.h"
-#include "GAS/Attributes/Coop_AttributeSet.h"
+#include "GAS/Attributes/HealthAttributeSet.h"
 #include "AbilitySystemComponent.h"
 
 struct Coop__DamageStatics
@@ -11,7 +11,7 @@ struct Coop__DamageStatics
 
 	Coop__DamageStatics()
 	{
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UCoop_AttributeSet, Armor, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UHealthAttributeSet, Armor, Target, false);
 	}
 };
 
@@ -37,11 +37,11 @@ void UDamageExecCalc::Execute_Implementation(const FGameplayEffectCustomExecutio
 		return;
 	}
 
-	FGameplayTag InvulnerableTag = FGameplayTag::RequestGameplayTag(FName("State.Buff.Invulnerable"));
+	/*FGameplayTag InvulnerableTag = FGameplayTag::RequestGameplayTag(FName("State.Buff.Invulnerable"));
 	if (InvulnerableTag.IsValid() && TargetASC->HasMatchingGameplayTag(InvulnerableTag))
 	{
 		return;
-	}
+	}*/
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	FAggregatorEvaluateParameters EvaluateParameters;
@@ -61,7 +61,7 @@ void UDamageExecCalc::Execute_Implementation(const FGameplayEffectCustomExecutio
 	if (FinalDamage > 0.0f)
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(
-			UCoop_AttributeSet::GetIncomingDamageAttribute(),
+			UHealthAttributeSet::GetIncomingDamageAttribute(),
 			EGameplayModOp::Additive,
 			FinalDamage
 		));

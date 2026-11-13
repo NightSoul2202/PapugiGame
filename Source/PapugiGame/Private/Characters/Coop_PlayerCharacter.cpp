@@ -16,7 +16,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "Input/InputConfig.h"
 #include "Components/Interaction/InteractionComponent.h"
-#include <Components/Equipment/EquipmentComponent.h>
+#include "Components/Equipment/EquipmentComponent.h"
+#include "Components/Health/HealthComponent.h"
 
 ACoop_PlayerCharacter::ACoop_PlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCoop_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -26,6 +27,8 @@ ACoop_PlayerCharacter::ACoop_PlayerCharacter(const FObjectInitializer& ObjectIni
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(RootComponent);
 	CameraComponent->bUsePawnControlRotation = true;
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
@@ -37,6 +40,11 @@ void ACoop_PlayerCharacter::BeginPlay()
 	if (UCoop_CharacterMovementComponent* CharMovement = Cast<UCoop_CharacterMovementComponent>(GetCharacterMovement()))
 	{
 		CharMovement->OnSlideExitedDelegate.AddUObject(this, &ACoop_PlayerCharacter::StopSliding);
+	}
+
+	if (HealthComponent)
+	{
+		HealthComponent->OnCharacterDeathDelegate.AddDynamic(this, &ACoop_PlayerCharacter::OnDeath);
 	}
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
@@ -132,21 +140,40 @@ void ACoop_PlayerCharacter::Slide()
 
 void ACoop_PlayerCharacter::OnDeath()
 {
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	if (HasAuthority())
 	{
-		DisableInput(PC);
+		Multicast_OnDeath();
+	}
+}
+
+void ACoop_PlayerCharacter::Multicast_OnDeath_Implementation()
+{
+	if (IsLocallyControlled())
+	{
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			DisableInput(PC);
+		}
 	}
 
-	DisableCollision();
-
-	EnableRagdoll();
+	if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+	{
+		ASC->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("State.Death")));
+	}
 
 	if (HasAuthority())
 	{
-		/*AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();*/
-
-		DetachFromControllerPendingDestroy();
+		Drop();
 	}
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->DisableMovement();
+		MoveComp->StopMovementImmediately();
+	}
+	DisableCollision();
+
+	EnableRagdoll();
 }
 
 void ACoop_PlayerCharacter::StopSliding()
@@ -262,7 +289,10 @@ void ACoop_PlayerCharacter::PossessedBy(AController* NewController)
 	{
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 
-		PS->OnOutHealthDelegate.AddUObject(this, &ACoop_PlayerCharacter::OnDeath);
+		if (HealthComponent)
+		{
+			HealthComponent->InitializeHealthComponent(PS);
+		}
 
 		if (HasAuthority())
 		{
@@ -294,7 +324,10 @@ void ACoop_PlayerCharacter::OnRep_PlayerState()
 	{
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 
-		PS->OnOutHealthDelegate.AddUObject(this, &ACoop_PlayerCharacter::OnDeath);
+		if (HealthComponent)
+		{
+			HealthComponent->InitializeHealthComponent(PS);
+		}
 	}
 }
 
