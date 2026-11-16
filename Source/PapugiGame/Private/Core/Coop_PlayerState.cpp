@@ -18,14 +18,6 @@ ACoop_PlayerState::ACoop_PlayerState()
 	NetUpdateFrequency = 128.0f;
 }
 
-void ACoop_PlayerState::BroadcastDeath()
-{
-	if (OnOutHealthDelegate.IsBound())
-	{
-		OnOutHealthDelegate.Broadcast();
-	}
-}
-
 UAbilitySystemComponent* ACoop_PlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

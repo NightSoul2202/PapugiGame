@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameplayEffectTypes.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDeathSignature);
 
-class ACoop_PlayerState;
+class UAbilitySystemComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PAPUGIGAME_API UHealthComponent : public UActorComponent
@@ -20,12 +21,10 @@ public:
 	UHealthComponent();
 
 	UPROPERTY(BlueprintAssignable, Category = "Coop|Health")
-	FOnCharacterDeath OnCharacterDeathDelegate;
+	FOnCharacterDeathSignature OnCharacterDeathDelegate;
 
-	void InitializeHealthComponent(ACoop_PlayerState* PS);
+	void InitializeHealthComponent(UAbilitySystemComponent* ASC);
 
 protected: 
-
-	UFUNCTION()
-	void OnPlayerStateDeath();
+	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
 };

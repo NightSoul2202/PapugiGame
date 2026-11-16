@@ -75,14 +75,10 @@ void UGA_MeleeAttack::InputPressed(const FGameplayAbilitySpecHandle Handle, cons
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
 
 	bComboSaved = true;
-
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("CLICK INPUT!"));
 }
 
 void UGA_MeleeAttack::OnComboWindowReceived(FGameplayEventData EventData)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, TEXT("CLICK COMBO"));
-
 	UMeleeComponent* MeleeComp = GetMeleeComponent();
 	if (!MeleeComp)
 	{

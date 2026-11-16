@@ -55,6 +55,5 @@ protected:
 private:
 
 	void PerformIncomingDamage();
-	void CheckIfDead();
 	
 };

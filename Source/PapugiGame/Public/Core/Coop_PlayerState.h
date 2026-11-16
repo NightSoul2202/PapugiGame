@@ -7,8 +7,6 @@
 #include "AbilitySystemInterface.h"
 #include "Coop_PlayerState.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnOutHealth);
-
 class UAbilitySystemComponent;
 class UHealthAttributeSet;
 class UMovementAttributeSet;
@@ -20,10 +18,6 @@ class PAPUGIGAME_API ACoop_PlayerState : public APlayerState, public IAbilitySys
 
 public:
 	ACoop_PlayerState();
-
-	FOnOutHealth OnOutHealthDelegate;
-
-	void BroadcastDeath();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 

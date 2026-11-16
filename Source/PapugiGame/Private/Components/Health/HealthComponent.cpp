@@ -2,25 +2,31 @@
 
 
 #include "Components/Health/HealthComponent.h"
-#include "Core/Coop_PlayerState.h"
+#include "AbilitySystemComponent.h"
+#include "GAS/Attributes/HealthAttributeSet.h"
 
 UHealthComponent::UHealthComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UHealthComponent::InitializeHealthComponent(ACoop_PlayerState* PS)
+void UHealthComponent::InitializeHealthComponent(UAbilitySystemComponent* ASC)
 {
-	if (PS)
+	if (!ASC)
 	{
-		PS->OnOutHealthDelegate.AddUObject(this, &UHealthComponent::OnPlayerStateDeath);
+		return;
 	}
+
+	ASC->GetGameplayAttributeValueChangeDelegate(UHealthAttributeSet::GetHealthAttribute()).AddUObject(this, &UHealthComponent::OnHealthChanged);
 }
 
-void UHealthComponent::OnPlayerStateDeath()
+void UHealthComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (OnCharacterDeathDelegate.IsBound())
+	if (Data.NewValue <= 0.0f && Data.OldValue > 0.0f)
 	{
-		OnCharacterDeathDelegate.Broadcast();
+		if (OnCharacterDeathDelegate.IsBound())
+		{
+			OnCharacterDeathDelegate.Broadcast();
+		}
 	}
 }

@@ -37,12 +37,6 @@ void UDamageExecCalc::Execute_Implementation(const FGameplayEffectCustomExecutio
 		return;
 	}
 
-	/*FGameplayTag InvulnerableTag = FGameplayTag::RequestGameplayTag(FName("State.Buff.Invulnerable"));
-	if (InvulnerableTag.IsValid() && TargetASC->HasMatchingGameplayTag(InvulnerableTag))
-	{
-		return;
-	}*/
-
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	FAggregatorEvaluateParameters EvaluateParameters;
 	EvaluateParameters.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();

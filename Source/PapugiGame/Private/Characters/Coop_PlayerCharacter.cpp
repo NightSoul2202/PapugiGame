@@ -291,7 +291,7 @@ void ACoop_PlayerCharacter::PossessedBy(AController* NewController)
 
 		if (HealthComponent)
 		{
-			HealthComponent->InitializeHealthComponent(PS);
+			HealthComponent->InitializeHealthComponent(PS->GetAbilitySystemComponent());
 		}
 
 		if (HasAuthority())
@@ -326,7 +326,7 @@ void ACoop_PlayerCharacter::OnRep_PlayerState()
 
 		if (HealthComponent)
 		{
-			HealthComponent->InitializeHealthComponent(PS);
+			HealthComponent->InitializeHealthComponent(PS->GetAbilitySystemComponent());
 		}
 	}
 }

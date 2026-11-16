@@ -4,7 +4,6 @@
 #include "GAS/Attributes/HealthAttributeSet.h"
 #include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
-#include "Core/Coop_PlayerState.h"
 
 UHealthAttributeSet::UHealthAttributeSet()
 {
@@ -72,18 +71,5 @@ void UHealthAttributeSet::PerformIncomingDamage()
 		const float NewHealth = GetHealth() - LocalIncomingDamage;
 
 		SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
-
-		CheckIfDead();
-	}
-}
-
-void UHealthAttributeSet::CheckIfDead()
-{
-	if (GetHealth() <= 0.0f)
-	{
-		if (ACoop_PlayerState* PS = Cast<ACoop_PlayerState>(GetOwningActor()))
-		{
-			PS->BroadcastDeath();
-		}
 	}
 }
