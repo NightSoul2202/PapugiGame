@@ -27,4 +27,11 @@ protected:
 
 	UFUNCTION()
 	void HandleAmmoChanged(int32 CurrentAmmo, int32 MaxAmmo);
+
+	UFUNCTION()
+	void HandleHealthChanged(float CurrentHealth, float MaxHealth);
+
+private:
+
+	void SyncHUDWithPawn(APawn* CurrentPawn);
 };

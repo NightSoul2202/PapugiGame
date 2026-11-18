@@ -4,6 +4,7 @@
 #include "Net/UnrealNetwork.h"
 #include "AbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
+#include "Characters/HeroClassInfo.h"
 #include "Equipment/Core/BaseEquipment.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -65,6 +66,27 @@ USkeletalMeshComponent* UEquipmentComponent::GetOwnerMesh(AActor* Owner)
 	}
 	
 	return Owner->FindComponentByClass<USkeletalMeshComponent>();
+}
+
+void UEquipmentComponent::OnHeroInitialized(UHeroClassInfo* ClassInfo)
+{
+	if (!ClassInfo || !ClassInfo->StartingWeapon) return;
+
+	FTransform SpawnTransform = GetOwner()->GetActorTransform();
+	ABaseEquipment* SpawnedWeapon = GetWorld()->SpawnActorDeferred<ABaseEquipment>(
+		ClassInfo->StartingWeapon,
+		SpawnTransform, 
+		GetOwner(), 
+		Cast<APawn>(GetOwner()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+
+	if (SpawnedWeapon)
+	{
+		SpawnedWeapon->FinishSpawning(SpawnTransform);
+
+		EquipItem(SpawnedWeapon);
+	}
 }
 
 bool UEquipmentComponent::Server_DropItem_Validate()

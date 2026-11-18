@@ -18,6 +18,7 @@
 #include "Components/Interaction/InteractionComponent.h"
 #include "Components/Equipment/EquipmentComponent.h"
 #include "Components/Health/HealthComponent.h"
+#include <Components/ClassSystem/HeroClassComponent.h>
 
 ACoop_PlayerCharacter::ACoop_PlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCoop_CharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -29,6 +30,8 @@ ACoop_PlayerCharacter::ACoop_PlayerCharacter(const FObjectInitializer& ObjectIni
 	CameraComponent->bUsePawnControlRotation = true;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipmentComponent"));
+	HeroClassComponent = CreateDefaultSubobject<UHeroClassComponent>(TEXT("HeroClassComponent"));
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
@@ -292,6 +295,11 @@ void ACoop_PlayerCharacter::PossessedBy(AController* NewController)
 		if (HealthComponent)
 		{
 			HealthComponent->InitializeHealthComponent(PS->GetAbilitySystemComponent());
+		}
+
+		if (HeroClassComponent)
+		{
+			HeroClassComponent->InitializeClass();
 		}
 
 		if (HasAuthority())

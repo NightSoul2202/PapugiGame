@@ -5,8 +5,11 @@
 #include "UI/PlayerHUDWidget.h"
 #include "Characters/Coop_PlayerCharacter.h"
 #include "Components/Equipment/EquipmentComponent.h"
+#include "Components/Health/HealthComponent.h"
 #include "Equipment/Components/AmmoComponent.h"
 #include "Equipment/Core/BaseEquipment.h"
+#include "AbilitySystemGlobals.h"
+#include "GAS/Attributes/HealthAttributeSet.h"
 
 void ACoop_PlayerController::BeginPlay()
 {
@@ -18,7 +21,16 @@ void ACoop_PlayerController::BeginPlay()
 		if (HUDWidgetInstance)
 		{
 			HUDWidgetInstance->AddToViewport();
-			HUDWidgetInstance->OnWeaponChanged(false);
+
+			if (APawn* CurrentPawn = GetPawn())
+			{
+				SyncHUDWithPawn(CurrentPawn);
+			}
+			else
+			{
+				HUDWidgetInstance->OnWeaponChanged(false);
+				HUDWidgetInstance->OnHealthChanged();
+			}
 		}
 	}
 }
@@ -35,6 +47,20 @@ void ACoop_PlayerController::SetPawn(APawn* InPawn)
 			EquipComp->OnEquipmentChanged.AddDynamic(this, &ACoop_PlayerController::HandleEquipmentChanged);
 
 			HandleEquipmentChanged(EquipComp->GetCurrentItem());
+		}
+
+		if (UHealthComponent* HealthComp = InPawn->FindComponentByClass<UHealthComponent>())
+		{
+			HealthComp->OnHealthChangedDelegate.RemoveDynamic(this, &ACoop_PlayerController::HandleHealthChanged);
+			HealthComp->OnHealthChangedDelegate.AddDynamic(this, &ACoop_PlayerController::HandleHealthChanged);
+
+			if (UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InPawn))
+			{
+				float CurrentHealth = ASC->GetNumericAttribute(UHealthAttributeSet::GetHealthAttribute());
+				float MaxHealth = ASC->GetNumericAttribute(UHealthAttributeSet::GetMaxHealthAttribute());
+
+				HandleHealthChanged(CurrentHealth, MaxHealth);
+			}
 		}
 	}
 }
@@ -69,5 +95,28 @@ void ACoop_PlayerController::HandleAmmoChanged(int32 CurrentAmmo, int32 MaxAmmo)
 	if (HUDWidgetInstance)
 	{
 		HUDWidgetInstance->UpdateAmmoData(CurrentAmmo, MaxAmmo);
+	}
+}
+
+void ACoop_PlayerController::HandleHealthChanged(float CurrentHealth, float MaxHealth)
+{
+	if (HUDWidgetInstance)
+	{
+		HUDWidgetInstance->UpdateHealth(CurrentHealth, MaxHealth);
+	}
+}
+
+void ACoop_PlayerController::SyncHUDWithPawn(APawn* CurrentPawn)
+{
+	if (UEquipmentComponent* EquipComp = CurrentPawn->FindComponentByClass<UEquipmentComponent>())
+	{
+		HandleEquipmentChanged(EquipComp->GetCurrentItem());
+	}
+
+	if (UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(CurrentPawn))
+	{
+		float CurrentHealth = ASC->GetNumericAttribute(UHealthAttributeSet::GetHealthAttribute());
+		float MaxHealth = ASC->GetNumericAttribute(UHealthAttributeSet::GetMaxHealthAttribute());
+		HandleHealthChanged(CurrentHealth, MaxHealth);
 	}
 }

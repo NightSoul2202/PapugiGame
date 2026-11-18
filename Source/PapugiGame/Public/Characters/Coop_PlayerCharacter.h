@@ -15,6 +15,8 @@ class UInputComponent;
 class UInputAction;
 class UInputMappingContext;
 class UHealthComponent;
+class UEquipmentComponent;
+class UHeroClassComponent;
 
 UCLASS()
 class PAPUGIGAME_API ACoop_PlayerCharacter : public ACharacter, public IAbilitySystemInterface
@@ -61,6 +63,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Components")
 	TObjectPtr<UHealthComponent> HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Components")
+	TObjectPtr<UEquipmentComponent> EquipmentComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Components")
+	TObjectPtr<UHeroClassComponent> HeroClassComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> CameraComponent;

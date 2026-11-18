@@ -4,16 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interfaces/HeroInit.h"
 #include "EquipmentComponent.generated.h"
 
 class ABaseEquipment;
 class UAbilitySystemComponent;
 class USkeletalMeshComponent;
+class UHeroClassInfo;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEquipmentChanged, ABaseEquipment*, NewItem);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PAPUGIGAME_API UEquipmentComponent : public UActorComponent
+class PAPUGIGAME_API UEquipmentComponent : public UActorComponent, public IHeroInit
 {
 	GENERATED_BODY()
 
@@ -31,6 +33,8 @@ public:
 		
 	UPROPERTY(BlueprintAssignable, Category = "Coop|Equipment")
 	FOnEquipmentChanged OnEquipmentChanged;
+
+	void OnHeroInitialized(UHeroClassInfo* ClassInfo) override;
 
 protected:
 	virtual void BeginPlay() override;	

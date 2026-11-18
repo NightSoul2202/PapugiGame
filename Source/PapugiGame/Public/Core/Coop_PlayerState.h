@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
+#include "Characters/HeroClassInfo.h"
 #include "Coop_PlayerState.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerClassUpdated, UHeroClassInfo*, NewClassData);
 
 class UAbilitySystemComponent;
 class UHealthAttributeSet;
@@ -21,6 +24,13 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UHeroClassInfo* GetHeroClassData() const;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerClassUpdated OnPlayerClassUpdatedDelegate;
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Abilities")
@@ -31,5 +41,11 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Coop|Attributes")
 	TObjectPtr<UMovementAttributeSet> MovementAttributeSet;
+
+	UPROPERTY(Replicated)
+	TObjectPtr<UHeroClassInfo> SelectedClassData;
+
+	UFUNCTION()
+	virtual void OnRep_SelectedClass();
 	
 };

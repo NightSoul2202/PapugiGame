@@ -8,6 +8,7 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDeathSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, CurrentHealth, float, MaxHealth);
 
 class UAbilitySystemComponent;
 
@@ -23,8 +24,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Coop|Health")
 	FOnCharacterDeathSignature OnCharacterDeathDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category = "Coop|Health")
+	FOnHealthChanged OnHealthChangedDelegate;
+
 	void InitializeHealthComponent(UAbilitySystemComponent* ASC);
 
 protected: 
 	virtual void OnHealthChanged(const FOnAttributeChangeData& Data);
+
+private:
+	void InitHealth(UAbilitySystemComponent* ASC);
 };
